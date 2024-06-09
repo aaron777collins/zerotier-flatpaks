@@ -2,28 +2,31 @@
 
 set -e
 
+LOGFILE="logs/build.log"
+mkdir -p logs
+
 log() {
-    echo "$(date) - $1"
+    echo "$(date) - $1" | tee -a $LOGFILE
 }
 
 log "Installing necessary tools"
-sudo apt update
-sudo apt install -y flatpak flatpak-builder git wget jq
+sudo apt update | tee -a $LOGFILE
+sudo apt install -y flatpak flatpak-builder git wget jq | tee -a $LOGFILE
 
 log "Adding Flathub repository and installing required runtimes"
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-sudo flatpak install -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo | tee -a $LOGFILE
+sudo flatpak install -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08 | tee -a $LOGFILE
 
 log "Creating build directory"
-mkdir -p build
+mkdir -p build | tee -a $LOGFILE
 cd build
 
 log "Fetching the latest ZeroTier-One release"
 ZTO_URL=$(curl -s https://api.github.com/repos/zerotier/ZeroTierOne/releases/latest | jq -r '.tarball_url')
 log "ZeroTier-One URL: $ZTO_URL"
-wget -O zerotier-one-latest.tar.gz $ZTO_URL
+wget -O zerotier-one-latest.tar.gz $ZTO_URL | tee -a $LOGFILE
 log "Downloaded ZeroTier-One tarball"
-tar -xzf zerotier-one-latest.tar.gz
+tar -xzf zerotier-one-latest.tar.gz | tee -a $LOGFILE
 log "Extracted ZeroTier-One tarball"
 ZTO_DIR=$(tar -tzf zerotier-one-latest.tar.gz | head -1 | cut -f1 -d"/")
 ZTO_SHA256=$(sha256sum zerotier-one-latest.tar.gz | cut -d ' ' -f 1)
@@ -61,9 +64,9 @@ cat > com.zerotier.one.json <<EOL
 EOL
 
 log "Building Flatpak for ZeroTier-One"
-flatpak-builder --force-clean build-dir-one com.zerotier.one.json || { log "Failed to build ZeroTier-One"; exit 1; }
+flatpak-builder --force-clean build-dir-one com.zerotier.one.json 2>&1 | tee -a $LOGFILE || { log "Failed to build ZeroTier-One"; exit 1; }
 log "Built ZeroTier-One"
-flatpak-builder --repo=repo-one build-dir-one com.zerotier.one.json || { log "Failed to build ZeroTier-One repo"; exit 1; }
+flatpak-builder --repo=repo-one build-dir-one com.zerotier.one.json 2>&1 | tee -a $LOGFILE || { log "Failed to build ZeroTier-One repo"; exit 1; }
 log "Built ZeroTier-One repo"
 tar -czf zerotier-one-flatpak-repo.tar.gz -C repo-one .
 log "Packaged ZeroTier-One Flatpak"
@@ -71,9 +74,9 @@ log "Packaged ZeroTier-One Flatpak"
 log "Fetching the latest ZeroTier-GUI release"
 ZTG_URL=$(curl -s https://api.github.com/repos/tralph3/ZeroTier-GUI/releases/latest | jq -r '.tarball_url')
 log "ZeroTier-GUI URL: $ZTG_URL"
-wget -O zerotier-gui-latest.tar.gz $ZTG_URL
+wget -O zerotier-gui-latest.tar.gz $ZTG_URL | tee -a $LOGFILE
 log "Downloaded ZeroTier-GUI tarball"
-tar -xzf zerotier-gui-latest.tar.gz
+tar -xzf zerotier-gui-latest.tar.gz | tee -a $LOGFILE
 log "Extracted ZeroTier-GUI tarball"
 ZTG_DIR=$(tar -tzf zerotier-gui-latest.tar.gz | head -1 | cut -f1 -d"/")
 ZTG_SHA256=$(sha256sum zerotier-gui-latest.tar.gz | cut -d ' ' -f 1)
@@ -109,9 +112,9 @@ cat > com.zerotier.gui.json <<EOL
 EOL
 
 log "Building Flatpak for ZeroTier-GUI"
-flatpak-builder --force-clean build-dir-gui com.zerotier.gui.json || { log "Failed to build ZeroTier-GUI"; exit 1; }
+flatpak-builder --force-clean build-dir-gui com.zerotier.gui.json 2>&1 | tee -a $LOGFILE || { log "Failed to build ZeroTier-GUI"; exit 1; }
 log "Built ZeroTier-GUI"
-flatpak-builder --repo=repo-gui build-dir-gui com.zerotier.gui.json || { log "Failed to build ZeroTier-GUI repo"; exit 1; }
+flatpak-builder --repo=repo-gui build-dir-gui com.zerotier.gui.json 2>&1 | tee -a $LOGFILE || { log "Failed to build ZeroTier-GUI repo"; exit 1; }
 log "Built ZeroTier-GUI repo"
 tar -czf zerotier-gui-flatpak-repo.tar.gz -C repo-gui .
 log "Packaged ZeroTier-GUI Flatpak"

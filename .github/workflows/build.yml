@@ -30,6 +30,7 @@ jobs:
         path: |
           build/zerotier-one-flatpak-repo.tar.gz
           build/zerotier-gui-flatpak-repo.tar.gz
+          logs/build.log
 
   release:
     needs: build
@@ -55,7 +56,9 @@ jobs:
         asset_path: |
           build/zerotier-one-flatpak-repo.tar.gz
           build/zerotier-gui-flatpak-repo.tar.gz
+          logs/build.log
         asset_name: |
           zerotier-one-flatpak-repo.tar.gz
           zerotier-gui-flatpak-repo.tar.gz
+          build.log
         asset_content_type: application/gzip
