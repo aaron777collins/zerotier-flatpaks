@@ -3,7 +3,7 @@
 set -e
 
 LOGFILE="logs/build.log"
-mkdir -p logs
+mkdir -p logs || { echo "Failed to create logs directory"; exit 1; }
 
 log() {
     echo "$(date) - $1" | tee -a $LOGFILE
