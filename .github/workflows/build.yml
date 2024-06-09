@@ -56,6 +56,4 @@ jobs:
           build/zerotier-one-flatpak-repo.tar.gz
           build/zerotier-gui-flatpak-repo.tar.gz
         asset_name: |
-          zerotier-one-flatpak-repo.tar.gz
-          zerotier-gui-flatpak-repo.tar.gz
-        asset_content_type: application/gzip
+          zerotier-one-flatpa
