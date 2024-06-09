@@ -28,8 +28,8 @@ jobs:
       with:
         name: zerotier-flatpak-repos
         path: |
-          zerotier-one-flatpak-repo.tar.gz
-          zerotier-gui-flatpak-repo.tar.gz
+          build/zerotier-one-flatpak-repo.tar.gz
+          build/zerotier-gui-flatpak-repo.tar.gz
 
   release:
     needs: build
@@ -53,8 +53,8 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
-          zerotier-one-flatpak-repo.tar.gz
-          zerotier-gui-flatpak-repo.tar.gz
+          build/zerotier-one-flatpak-repo.tar.gz
+          build/zerotier-gui-flatpak-repo.tar.gz
         asset_name: |
           zerotier-one-flatpak-repo.tar.gz
           zerotier-gui-flatpak-repo.tar.gz
