@@ -10,7 +10,8 @@
             "buildsystem": "simple",
             "build-commands": [
                 "make",
-                "make install DESTDIR=/app"
+                "mkdir -p /app/bin",
+                "cp zerotier-one /app/bin/"
             ],
             "sources": [
                 {
