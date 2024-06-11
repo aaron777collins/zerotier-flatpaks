@@ -13,10 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Flatpak
+    - name: Set up Flatpak and Rust
       run: |
         sudo apt update
-        sudo apt install -y flatpak flatpak-builder git wget jq
+        sudo apt install -y flatpak flatpak-builder git wget jq curl
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        source $HOME/.cargo/env
         sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         sudo flatpak install -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
 
